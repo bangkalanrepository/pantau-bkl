@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/* Dasar                                                              */
+/* ------------------------------------------------------------------ */
+html {
+  -webkit-tap-highlight-color: transparent;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: #f1f5f9;
+  color: #1e293b;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ------------------------------------------------------------------ */
+/* Leaflet overrides                                                  */
+/* ------------------------------------------------------------------ */
+.leaflet-container {
+  font-family: inherit;
+  background-color: #dbeafe;
+}
+
+/* Tooltip permanen (info ringkas marker) */
+.pantau-tooltip.leaflet-tooltip {
+  padding: 7px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.65rem;
+  background-color: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.14);
+  color: #0f172a;
+  white-space: nowrap;
+}
+
+.leaflet-tooltip-top.pantau-tooltip::before {
+  border-top-color: rgba(255, 255, 255, 0.97);
+}
+
+/* Pin marker kustom */
+.pantau-marker {
+  /* netralkan style bawaan divIcon */
+  background: transparent;
+  border: none;
+}
+
+.pantau-marker .pantau-pin {
+  display: block;
+  width: 13px;
+  height: 13px;
+  border-radius: 9999px;
+  background: var(--pin-color, #0284c7);
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 1px 6px rgba(2, 6, 23, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pantau-marker .pantau-pin-selected {
+  transform: scale(1.35);
+  box-shadow:
+    0 0 0 5px rgba(3, 105, 161, 0.25),
+    0 2px 8px rgba(2, 6, 23, 0.5);
+}
+
+/* Kontrol & atribusi lebih ringkas */
+.leaflet-control-attribution {
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.8) !important;
+}
+
+@media (max-width: 640px) {
+  .leaflet-control-attribution {
+    max-width: 60vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
