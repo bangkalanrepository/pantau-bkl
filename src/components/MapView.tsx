@@ -9,6 +9,7 @@ import {
   MAP_TILE_URL,
 } from '../config/appConfig';
 import { LocationMarker } from './LocationMarker';
+import { WindDegreeGuide } from './WindDegreeGuide';
 
 /** Sesuaikan viewport peta agar semua lokasi terlihat. */
 function FitBounds({ locations }: { locations: readonly Location[] }) {
@@ -49,6 +50,10 @@ interface MapViewProps {
 export function MapView({ locations, dataMap, selectedId, onSelect }: MapViewProps) {
   return (
     <div className="relative h-full w-full">
+      {/* Tombol bantuan mengambang: panduan derajat arah angin */}
+      <div className="absolute bottom-14 left-3 z-[1100] sm:bottom-16">
+        <WindDegreeGuide variant="chip" />
+      </div>
       <MapContainer
         center={DEFAULT_MAP_CENTER}
         zoom={DEFAULT_MAP_ZOOM}

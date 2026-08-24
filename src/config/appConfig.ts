@@ -1,6 +1,6 @@
 /** Konfigurasi global aplikasi. */
 
-export const APP_NAME = 'Pantau BKL';
+export const APP_NAME = 'Pantau Bangkalan';
 export const APP_SUBTITLE = 'Pemantauan Cuaca & Kualitas Udara Kabupaten Bangkalan';
 
 /**

@@ -15,7 +15,9 @@ import { LOCATIONS } from './config/locations';
  */
 export default function App() {
   const { dataMap, isLoading, isRefreshing, lastUpdated, refresh } = useWeatherData(LOCATIONS);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  // Default terpilih: entri pertama di config lokasi (Kecamatan Bangkalan),
+  // sehingga panel detail kiri langsung menampilkan data saat halaman dibuka.
+  const [selectedId, setSelectedId] = useState<string | null>(LOCATIONS[0]?.id ?? null);
 
   const handleSelect = useCallback((id: string) => {
     setSelectedId(id);

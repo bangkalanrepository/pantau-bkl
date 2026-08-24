@@ -102,7 +102,7 @@ export function SummaryCards({ locations, dataMap, isLoading }: SummaryCardsProp
         iconClass="bg-sky-50 text-sky-700"
         label="Jumlah Lokasi"
         value={locations.length}
-        sub={`${entries.length} loksi berdata`}
+        sub={`${entries.length} lokasi berdata`}
       />
       <StatCard
         icon={<Thermometer className="h-5 w-5" aria-hidden="true" />}

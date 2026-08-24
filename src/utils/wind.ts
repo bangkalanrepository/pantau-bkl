@@ -21,3 +21,23 @@ export function getWindDirection(degree?: number): string | undefined {
   const normalized = ((degree % 360) + 360) % 360;
   return COMPASS_POINTS[Math.round(normalized / 45) % COMPASS_POINTS.length];
 }
+
+export interface WindSector {
+  name: string;
+  /** Derajat ideal penjuru ini. */
+  ideal: number;
+  /** Rentang label dalam teks siap tampil (pembulatan ±22,5°). */
+  range: string;
+}
+
+/** Rentang derajat tiap penjuru untuk tampilan panduan. */
+export const WIND_SECTORS: readonly WindSector[] = [
+  { name: 'Utara', ideal: 0, range: '337,5° – 22,5°' },
+  { name: 'Timur Laut', ideal: 45, range: '22,5° – 67,5°' },
+  { name: 'Timur', ideal: 90, range: '67,5° – 112,5°' },
+  { name: 'Tenggara', ideal: 135, range: '112,5° – 157,5°' },
+  { name: 'Selatan', ideal: 180, range: '157,5° – 202,5°' },
+  { name: 'Barat Daya', ideal: 225, range: '202,5° – 247,5°' },
+  { name: 'Barat', ideal: 270, range: '247,5° – 292,5°' },
+  { name: 'Barat Laut', ideal: 315, range: '292,5° – 337,5°' },
+];

@@ -1,31 +1,46 @@
 # Pantau BKL
 
-Dashboard pemantauan **cuaca** dan **kualitas udara** untuk titik-titik lokasi di Kabupaten Bangkalan (dan daerah lain yang mudah ditambahkan). Dibangun sebagai SPA React + Vite tanpa backend sendiri — data diambil langsung dari API publik **BMKG** dan **Open-Meteo**, dengan peta interaktif **Leaflet**.
+Dashboard pemantauan **cuaca** dan **kualitas udara** untuk seluruh **18 kecamatan di Kabupaten Bangkalan** (dan daerah lain yang mudah ditambahkan). Dibangun sebagai SPA React + Vite tanpa backend sendiri — data diambil langsung dari API publik **BMKG** dan **Open-Meteo**, dengan peta interaktif **Leaflet**.
 
 ![Stack](https://img.shields.io/badge/React-19-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue) ![Vite](https://img.shields.io/badge/Vite-7-purple) ![Tailwind](https://img.shields.io/badge/TailwindCSS-4-cyan)
 
 ## Fitur
 
-- Peta Leaflet + OpenStreetMap dengan marker berwarna sesuai status kualitas udara.
+### Peta & Marker
+- Peta Leaflet + OpenStreetMap; marker tiap lokasi **berwarna sesuai status kualitas udara** (satu sumber warna: `getAqiStatus()`).
 - Info ringkas **selalu terlihat** di setiap titik: nama daerah, suhu, kelembapan, arah & kecepatan angin.
-- Klik marker → panel detail lengkap (Informasi Cuaca BMKG, Kualitas Udara Open-Meteo, Informasi Lokasi).
-- Summary cards: jumlah lokasi, suhu rata-rata/tertinggi/terendah, kelembapan rata-rata, status kualitas udara.
-- Kategori AQI resmi (Baik s.d. Berbahaya) lewat utilitas terpusat `getAqiStatus()`.
-- Refresh manual + auto-refresh tiap 10 menit (konfigurable), lengkap dengan waktu pembaruan terakhir.
-- Loading skeleton, error per-sumber (BMKG/Open-Meteo saling menggantikan bila salah satu gagal), responsive desktop & mobile.
+- Panah arah angin **berputar presisi sesuai derajat data** (`wd_deg`), dengan acuan utara = atas.
+- Klik marker → panel detail lengkap; **Kecamatan Bangkalan tampil sebagai default** saat halaman dibuka.
+
+### Panel Detail
+- **Informasi Cuaca (BMKG)**: suhu, kelembapan, kondisi & deskripsi cuaca, arah angin (+derajat), kecepatan angin, gust, visibilitas, tutupan awan, presipitasi, kode cuaca, waktu analisis, ikon resmi BMKG, dan prakiraan 4 periode berikutnya.
+- **Kualitas Udara (Open-Meteo)**: US AQI & European AQI, PM10, PM2.5, CO, NO₂, SO₂, O₃, debu, indeks UV, aerosol optical depth, amonia.
+- **Kesimpulan bahasa awam**: identifikasi polutan dominan dibandingkan ambang acuan harian WHO 2021 + saran aktivitas per kategori (dibangun dari data hasil fetch, bukan teks statis).
+- **Atribusi sumber**: tautan BMKG pada fakta cuaca dan Open-Meteo pada kualitas udara.
+- Field null/kosong **tidak pernah dirender** (`undefined/null/NaN` disembunyikan).
+
+### Panduan Derajat Arah Angin
+- Tombol bantuan ❔ di baris "Arah Angin" dan chip "Panduan Angin" di pojok peta.
+- Membuka modal berisi kompas visual (panah mengikuti derajat lokasi terkait), tabel rentang 8 penjuru (±22,5° per sektor), dan catatan konvensi arah asal angin BMKG.
+
+### Dashboard
+- Summary cards: jumlah lokasi, suhu rata-rata/tertinggi/terendah (+nama lokasinya), kelembapan rata-rata, status kualitas udara agregat.
+- Refresh manual + auto-refresh tiap 10 menit (konfigurable) dengan stempel waktu pembaruan.
+- Loading skeleton, banner error per-sumber — BMKG dan Open-Meteo saling menggantikan bila salah satu gagal.
+- Responsive: sidebar detail di desktop, panel di bawah peta pada mobile.
 
 ## Teknologi
 
 | Teknologi | Peran |
 | --- | --- |
-| React 19 + TypeScript (strict) | UI library |
+| React 19 + TypeScript (strict, tanpa `any`) | UI library |
 | Vite 7 | Build tool & dev server |
 | Tailwind CSS 4 | Styling |
 | Leaflet + React Leaflet 5 | Peta |
 | Lucide React | Icon |
 | Native fetch + AbortController | HTTP request |
 
-Tidak memakai Next.js. Output build adalah statis (`dist/`) sehingga deploy ke Vercel sangat sederhana.
+Tidak memakai Next.js. Output build statis (`dist/`) sehingga deploy ke Vercel sangat sederhana.
 
 ## Struktur Project
 
@@ -34,7 +49,8 @@ pantau-bkl/
 ├── api/
 │   └── bmkg.ts              # Serverless function /api/bmkg (fallback CORS)
 ├── public/
-│   └── favicon.svg
+│   ├── favicon.svg
+│   └── icon.png             # Logo header
 ├── src/
 │   ├── api/
 │   │   ├── bmkg.ts          # Service BMKG (direct request → fallback proxy)
@@ -46,13 +62,15 @@ pantau-bkl/
 │   │   ├── Header.tsx
 │   │   ├── MapView.tsx
 │   │   ├── LocationMarker.tsx
-│   │   ├── WeatherPopup.tsx # Renderer section detail (cuaca/AQI/lokasi)
+│   │   ├── WeatherPopup.tsx     # Renderer section detail (cuaca/AQI/lokasi)
 │   │   ├── LocationDetail.tsx
 │   │   ├── SummaryCards.tsx
 │   │   ├── AqiBadge.tsx
+│   │   ├── WindArrow.tsx        # Panah arah angin presisi derajat
+│   │   ├── WindDegreeGuide.tsx  # Modal panduan derajat arah angin
 │   │   └── LoadingState.tsx
 │   ├── config/
-│   │   ├── locations.ts     # Daftar lokasi (lat/long/adm4)
+│   │   ├── locations.ts     # 18 kecamatan Bangkalan (lat/long/adm4)
 │   │   └── appConfig.ts     # REFRESH_INTERVAL dll.
 │   ├── hooks/
 │   │   └── useWeatherData.ts
@@ -62,10 +80,11 @@ pantau-bkl/
 │   │   ├── airQuality.ts    # Tipe response Open-Meteo + model AQI internal
 │   │   └── index.ts         # LocationWeatherData (data gabungan)
 │   ├── utils/
-│   │   ├── aqi.ts           # getAqiStatus() — kategori & warna AQI
-│   │   ├── wind.ts          # getWindDirection() derajat → mata angin ID
-│   │   ├── weather.ts       # Parser response BMKG → model internal
-│   │   └── format.ts        # Format angka/tanggal locale id-ID, WIB
+│   │   ├── aqi.ts               # getAqiStatus() — kategori & warna AQI
+│   │   ├── airQualityInsight.ts # Kesimpulan bahasa awam dari data fetch
+│   │   ├── wind.ts              # getWindDirection(), WIND_SECTORS
+│   │   ├── weather.ts           # Parser response BMKG → model internal
+│   │   └── format.ts            # Format angka/tanggal id-ID, WIB
 │   ├── App.tsx
 │   ├── main.tsx
 │   └── index.css
@@ -132,7 +151,7 @@ Parser ada di `src/utils/weather.ts` — dibuat berdasarkan response aktual dan 
 ### Open-Meteo — Air Quality
 
 ```
-https://air-quality-api.open-meteo.com/v1/air-quality?latitude=-7.04&longitude=112.74&current=european_aqi,us_aqi,pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone,dust,uv_index,aerosol_optical_depth,ammonia&timezone=auto
+https://air-quality-api.open-meteo.com/v1/air-quality?latitude=-7.03&longitude=112.75&current=european_aqi,us_aqi,pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone,dust,uv_index,aerosol_optical_depth,ammonia&timezone=auto
 ```
 
 Kedua API publik dan tidak butuh API key, sehingga tidak ada environment variable palsu.
@@ -149,7 +168,6 @@ Kedua API publik dan tidak butuh API key, sehingga tidak ada environment variabl
 
 - Fetch seluruh lokasi memakai `Promise.allSettled` → satu lokasi gagal tidak menghentikan lokasi lain.
 - Di dalam satu lokasi pun BMKG & Open-Meteo diparalel dengan `allSettled`: jika BMKG gagal tapi Open-Meteo berhasil, data AQI tetap tampil (dan sebaliknya). Error per-sumber tampil sebagai banner kuning di panel detail, misalnya *"Data cuaca gagal dimuat (BMKG)"* atau *"Data kualitas udara sementara tidak tersedia"*.
-- Field bernilai null/undefined **tidak pernah** dirender (`undefined/null/NaN` disembunyikan).
 
 ## Penanganan CORS
 
@@ -159,26 +177,34 @@ Kedua API publik dan tidak butuh API key, sehingga tidak ada environment variabl
    - Development: path yang sama diteruskan Vite proxy ke `api.bmkg.go.id` (lihat `vite.config.ts`).
 3. Tidak ada backend terpisah.
 
-## Menambah / Mengubah Lokasi
+## Data Lokasi & Menambah Lokasi Baru
 
-Edit `src/config/locations.ts`:
+Seluruh **18 kecamatan Kabupaten Bangkalan sudah dikonfigurasi** di `src/config/locations.ts` dengan koordinat titik resmi dan kode `adm4` yang **sudah diverifikasi aktif** di API BMKG.
+
+Format entri:
 
 ```ts
 {
-  id: "bangkalan-01",            // unik
+  id: "bangkalan",          // unik
   name: "Bangkalan",
-  latitude: -7.0,
-  longitude: 112.7,
-  adm4: "35.26.01.1001",         // kode wilayah desa/kelurahan versi BMKG
-  description?: "Opsional"
+  latitude: -7.0293813,
+  longitude: 112.7474965,
+  adm4: "35.26.01.1001",    // kode desa/kelurahan versi BMKG
 }
 ```
 
 - **Mengganti koordinat**: cukup ubah `latitude`/`longitude`. Koordinat dipakai untuk peta & Open-Meteo.
-- **Mengganti kode ADM4 BMKG**: ubah `adm4`. Kode bisa diverifikasi dengan membuka
-  `https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=<kode>` di browser — pastikan `lokasi.desa` sesuai harapan.
-- **Menambah lokasi baru**: duplikasi entri, ganti `id` (unik), nama, koordinat, dan `adm4` tujuan. Peta, summary, dan data akan menyesuaikan otomatis.
+- **Mengganti kode ADM4 BMKG**: ubah `adm4`. Verifikasi dengan membuka
+  `https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=<kode>` — pastikan `lokasi.desa` sesuai harapan.
+- **Menambah lokasi baru**: duplikasi entri, ganti `id` (unik), nama, koordinat, dan `adm4` tujuan. Peta, summary, dan data menyesuaikan otomatis.
+- **Lokasi default panel detail**: entri **pertama** pada array `LOCATIONS` (saat ini Bangkalan) otomatis menjadi lokasi terpilih saat halaman dibuka.
 - Jika sebuah lokasi sengaja tanpa `adm4`, aplikasi tetap jalan: hanya data Open-Meteo yang tampil, dengan banner keterangan pada detailnya.
+
+## Konvensi Arah Angin
+
+- `wd_deg` dari BMKG adalah **arah asal** angin (derajat, utara = 0°).
+- Panah di UI berputar **presisi mengikuti derajat** tersebut, utara di atas.
+- Label teks membulatkan derajat ke 8 penjuru mata angin (rentang ±22,5° per penjuru) — rincian tersedia lewat tombol **Panduan Angin** di aplikasi.
 
 ## Environment Variables
 
@@ -187,4 +213,3 @@ Lihat `.env.example`. Semua opsional — hanya untuk menimpa base URL API (misal
 ## Lisensi
 
 Bebas digunakan untuk kebutuhan instansi/pemerintah. Data © BMKG dan © Open-Meteo, peta © OpenStreetMap contributors.
-# pantau-bkl

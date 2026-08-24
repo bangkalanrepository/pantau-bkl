@@ -6,6 +6,7 @@ import { buildAirQualityInsight } from '../utils/airQualityInsight';
 import { formatNumber, formatDateTime, formatTime, parseBmkgLocalDateTime } from '../utils/format';
 import { AqiBadge } from './AqiBadge';
 import { WindArrow } from './WindArrow';
+import { WindDegreeGuide } from './WindDegreeGuide';
 
 /**
  * WeatherPopup: renderer SECTION detail lengkap satu lokasi
@@ -17,13 +18,18 @@ import { WindArrow } from './WindArrow';
 interface RowProps {
   label: string;
   value?: ReactNode;
+  /** Node tambahan di samping label, mis. tombol bantuan. */
+  action?: ReactNode;
 }
 
-function Row({ label, value }: RowProps) {
+function Row({ label, value, action }: RowProps) {
   if (value === undefined || value === null || value === '') return null;
   return (
     <div className="flex items-start justify-between gap-4 py-1.5">
-      <dt className="text-sm text-slate-500">{label}</dt>
+      <dt className="flex items-center gap-1 text-sm text-slate-500">
+        {label}
+        {action}
+      </dt>
       <dd className="text-right text-sm font-medium text-slate-800">{value}</dd>
     </div>
   );
@@ -91,6 +97,7 @@ function WeatherSection({ weather }: { weather: WeatherData }) {
         <Row label="Deskripsi (EN)" value={weather.weatherDescriptionEn} />
         <Row
           label="Arah Angin"
+          action={<WindDegreeGuide degree={weather.windDirectionDeg} />}
           value={
             weather.windDirectionText !== undefined || weather.windDirectionDeg !== undefined ? (
               <span className="inline-flex items-center justify-end gap-1.5">
