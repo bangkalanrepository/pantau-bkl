@@ -10,19 +10,19 @@ interface WindArrowProps {
 /**
  * Panah arah angin dengan acuan peta standar: UTARA = ATAS.
  *
- * Panah menunjuk persis ke penjuru mata angin pada data:
- *   0°   → atas    (Utara)
- *   90°  → kanan   (Timur)
- *   180° → bawah   (Selatan)
- *   270° → kiri    (Barat)
- *
- * Rotasi = nilai derajat apa adanya sehingga selalu konsisten dengan
- * teks arah yang ditampilkan di sampingnya.
+ * Rotasi di-SNAP ke 8 penjuru mata angin sehingga panah PERSIS mengarah
+ * seperti teks yang tampil di sebelahnya (bukan derajat mentah):
+ *   Utara      → atas          Selatan     → bawah
+ *   Timur Laut → kanan atas    Barat Daya  → kiri bawah
+ *   Timur      → kanan         Barat       → kiri
+ *   Tenggara   → kanan bawah   Barat Laut  → kiri atas
  */
 export function WindArrow({ degree, className = '' }: WindArrowProps) {
   if (typeof degree !== 'number' || !Number.isFinite(degree)) return null;
 
   const normalized = ((degree % 360) + 360) % 360;
+  // Snap ke kelipatan 45° agar konsisten dengan label 8 penjuru.
+  const snapped = (Math.round(normalized / 45) * 45) % 360;
   const fromLabel = getWindDirection(normalized);
 
   return (
@@ -34,7 +34,7 @@ export function WindArrow({ degree, className = '' }: WindArrowProps) {
     >
       <ArrowUp
         className="h-full w-full"
-        style={{ transform: `rotate(${normalized}deg)` }}
+        style={{ transform: `rotate(${snapped}deg)` }}
         strokeWidth={2.5}
         aria-hidden="true"
       />
