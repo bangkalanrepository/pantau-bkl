@@ -10,6 +10,7 @@ Dashboard pemantauan **cuaca** dan **kualitas udara** untuk seluruh **18 kecamat
 - Peta Leaflet + OpenStreetMap; marker tiap lokasi **berwarna sesuai status kualitas udara** (satu sumber warna: `getAqiStatus()`).
 - Info ringkas **selalu terlihat** di setiap titik: nama daerah, suhu, kelembapan, arah & kecepatan angin.
 - Panah arah angin **menunjuk ke arah angin menuju** (ke mana) dan **berputar presisi sesuai derajat yang ditampilkan**, acuan utara = atas (0° = utara).
+- Viewport peta memakai `DEFAULT_MAP_ZOOM` (11.5) dan `DEFAULT_MAP_CENTER` langsung — tanpa `fitBounds`.
 - Klik marker → panel detail lengkap; **Kecamatan Bangkalan tampil sebagai default** saat halaman dibuka.
 
 ### Panel Detail
@@ -20,14 +21,15 @@ Dashboard pemantauan **cuaca** dan **kualitas udara** untuk seluruh **18 kecamat
 - Field null/kosong **tidak pernah dirender** (`undefined/null/NaN` disembunyikan).
 
 ### Panduan Derajat Arah Angin
-- Tombol bantuan ❔ di baris "Arah Angin" dan chip "Panduan Angin" di pojok peta.
-- Membuka modal berisi kompas visual (panah menunjuk arah tujuan lokasi terkait), tabel rentang 8 penjuru (±22,5° per sektor), dan catatan konvensi: derajat tampil = arah tujuan, kebalikan dari `wd_deg` BMKG (arah asal).
+- Tombol bantuan ❔ di baris "Arah Angin" dan chip "Panduan Angin" di pojok peta (chip mengikuti derajat lokasi yang sedang terpilih).
+- Membuka modal berisi kompas visual (panah menunjuk arah tujuan lokasi terkait), ringkasan *menuju/asal*, tabel rentang 8 penjuru (±22,5° per sektor), dan catatan konvensi: derajat tampil = arah tujuan, kebalikan dari `wd_deg` BMKG (arah asal).
 
 ### Dashboard
 - Summary cards: jumlah lokasi, suhu rata-rata/tertinggi/terendah (+nama lokasinya), kelembapan rata-rata, status kualitas udara agregat.
 - Refresh manual + auto-refresh tiap 10 menit (konfigurable) dengan stempel waktu pembaruan.
 - Loading skeleton, banner error per-sumber — BMKG dan Open-Meteo saling menggantikan bila salah satu gagal.
 - Responsive: sidebar detail di desktop, panel di bawah peta pada mobile.
+- Layout **full width** (tanpa batas `max-width`) — header, ringkasan, dan konten mengisi seluruh lebar layar.
 
 ## Teknologi
 
@@ -82,7 +84,7 @@ pantau-bkl/
 │   ├── utils/
 │   │   ├── aqi.ts               # getAqiStatus() — kategori & warna AQI
 │   │   ├── airQualityInsight.ts # Kesimpulan bahasa awam dari data fetch
-│   │   ├── wind.ts              # getWindDirection(), WIND_SECTORS
+│   │   ├── wind.ts              # getWindDirection(), normalizeDegrees/toWindDestinationDegrees, WIND_SECTORS
 │   │   ├── weather.ts           # Parser response BMKG → model internal
 │   │   └── format.ts            # Format angka/tanggal id-ID, WIB
 │   ├── App.tsx
