@@ -160,7 +160,7 @@
         "Pemantauan Cuaca & Kualitas Udara Kabupaten Bangkalan";
       var REFRESH_INTERVAL = 10 * 60 * 1000;
       var DEFAULT_MAP_CENTER = [-7.0513, 112.8948];
-      var DEFAULT_MAP_ZOOM = 11;
+      var DEFAULT_MAP_ZOOM = 11.5;
       var MAP_TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
       var MAP_TILE_ATTRIBUTION =
         '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors';
@@ -1611,7 +1611,9 @@
                 "div",
                 { className: "space-y-3 px-4 py-3" },
                 h(CompassDial, { degree: degree }),
-                typeof degree === "number" && isFiniteNumber(degree) && toDegrees !== undefined
+                typeof degree === "number" &&
+                  isFiniteNumber(degree) &&
+                  toDegrees !== undefined
                   ? h(
                       "p",
                       {
@@ -1621,11 +1623,7 @@
                       "Saat ini angin lokasi ini ",
                       h("strong", null, "menuju"),
                       " ",
-                      h(
-                        "strong",
-                        null,
-                        toLabel || Math.round(toDegrees) + "°",
-                      ),
+                      h("strong", null, toLabel || Math.round(toDegrees) + "°"),
                       " (" +
                         toDegrees.toFixed(1) +
                         "°), berasal dari " +
@@ -1659,7 +1657,11 @@
                     h(
                       "tr",
                       { className: "border-b border-slate-200 text-slate-400" },
-                      h("th", { className: "py-1.5 font-medium" }, "Arah tujuan"),
+                      h(
+                        "th",
+                        { className: "py-1.5 font-medium" },
+                        "Arah tujuan",
+                      ),
                       h(
                         "th",
                         { className: "py-1.5 font-medium" },
@@ -3179,8 +3181,7 @@
           h(
             "div",
             {
-              className:
-                "shrink-0 px-3 pt-4 sm:px-4",
+              className: "shrink-0 px-3 pt-4 sm:px-4",
             },
             h(SummaryCards, {
               locations: LOCATIONS,

@@ -12,7 +12,7 @@ export const REFRESH_INTERVAL = 10 * 60 * 1000;
 
 /** Pusat peta default sebelum fitBounds aktif (centroid seluruh lokasi). */
 export const DEFAULT_MAP_CENTER: [number, number] = [-7.0513, 112.8948];
-export const DEFAULT_MAP_ZOOM = 10;
+export const DEFAULT_MAP_ZOOM = 11.5;
 
 export const MAP_TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 export const MAP_TILE_ATTRIBUTION =
