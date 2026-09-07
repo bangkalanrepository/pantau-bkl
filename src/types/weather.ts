@@ -79,7 +79,7 @@ export interface WeatherData {
   windSpeed?: number;
   /** Hembusan (gust) bila tersedia dari sumber manapun. */
   gusts?: number;
-  /** Arah asal angin dalam derajat (0–360). */
+  /** Arah TUJUAN angin dalam derajat (0–360, 0 = utara = menuju utara). Konversi dari wd_deg BMKG (+180°). */
   windDirectionDeg?: number;
   /** Kardinal versi API (EN), contoh: "E". */
   windDirectionCardinal?: string;

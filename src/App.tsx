@@ -51,7 +51,7 @@ export default function App() {
         lastUpdated={lastUpdated}
       />
 
-      <div className="mx-auto w-full max-w-[1700px] shrink-0 px-3 pt-4 sm:px-4">
+      <div className="shrink-0 px-3 pt-4 sm:px-4">
         <SummaryCards
           locations={LOCATIONS}
           dataMap={dataMap}
@@ -59,7 +59,7 @@ export default function App() {
         />
       </div>
 
-      <main className="mx-auto flex min-h-0 w-full max-w-[1700px] flex-1 flex-col gap-4 px-3 py-4 sm:px-4 lg:grid lg:grid-cols-[minmax(340px,400px)_minmax(0,1fr)]">
+      <main className="flex min-h-0 w-full flex-1 flex-col gap-4 px-3 py-4 sm:px-4 lg:grid lg:grid-cols-[minmax(340px,400px)_minmax(0,1fr)]">
         {/* Sidebar detail — hanya desktop */}
         <div className="hidden min-h-0 lg:block">
           {selectedEntry !== undefined ? (

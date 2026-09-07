@@ -15,10 +15,24 @@ const COMPASS_POINTS = [
   'Barat Laut',
 ] as const;
 
+/** Normalisasi derajat ke rentang 0–360. */
+export function normalizeDegrees(degree: number): number {
+  return ((degree % 360) + 360) % 360;
+}
+
+/**
+ * Ubah derajat arah ASAL (BMKG `wd_deg`) menjadi derajat arah TUJUAN angin
+ * (ke mana) dengan menambahkan 180°. Contoh: asal Utara (0°) → tujuan Selatan (180°).
+ */
+export function toWindDestinationDegrees(degree?: number): number | undefined {
+  if (typeof degree !== 'number' || !Number.isFinite(degree)) return undefined;
+  return normalizeDegrees(degree + 180);
+}
+
 /** Kembalikan nama arah angin; undefined bila input tidak valid. */
 export function getWindDirection(degree?: number): string | undefined {
   if (typeof degree !== 'number' || !Number.isFinite(degree)) return undefined;
-  const normalized = ((degree % 360) + 360) % 360;
+  const normalized = normalizeDegrees(degree);
   return COMPASS_POINTS[Math.round(normalized / 45) % COMPASS_POINTS.length];
 }
 

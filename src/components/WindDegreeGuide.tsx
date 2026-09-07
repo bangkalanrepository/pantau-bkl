@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CircleHelp, X } from 'lucide-react';
 import { WIND_SECTORS } from '../utils/wind';
-import { getWindDirection } from '../utils/wind';
+import { getWindDirection, normalizeDegrees } from '../utils/wind';
 
 interface WindDegreeGuideProps {
-  /** Derajat angin lokasi terkait; bila ada, kompas menampilkan panah posisi saat ini. */
+  /** Derajat arah TUJUAN angin (0° = Utara); bila ada, kompas menampilkan panah posisi saat ini. */
   degree?: number;
   /** 'icon' = tombol kecil di baris tabel; 'chip' = tombol mengambang di peta. */
   variant?: 'icon' | 'chip';
@@ -53,7 +53,8 @@ function CompassDial({ degree }: { degree?: number }) {
       {labels}
       {degree !== undefined && (
         <g transform={`rotate(${degree} 80 80)`}>
-          {/* Panah presisi: kepala di tepi luar, ekor di pusat */}
+          {/* Panah arah TUJUAN angin: kepala di tepi luar, ekor di pusat.
+              degree sudah arah tujuan (0° = Utara), jadi diputar sesuai derajat tsb. */}
           <line x1="80" y1="84" x2="80" y2="52" className="stroke-sky-600" strokeWidth={4} strokeLinecap="round" />
           <polygon points="80,32 89,54 71,54" className="fill-sky-600" />
         </g>
@@ -85,7 +86,13 @@ export function WindDegreeGuide({ degree, variant = 'icon' }: WindDegreeGuidePro
     };
   }, [open, close]);
 
-  const currentLabel = typeof degree === 'number' && Number.isFinite(degree) ? getWindDirection(degree) : undefined;
+  const toLabel = getWindDirection(degree);
+  const toDegrees =
+    typeof degree === 'number' && Number.isFinite(degree) ? normalizeDegrees(degree) : undefined;
+  const fromLabel =
+    typeof degree === 'number' && Number.isFinite(degree) ? getWindDirection(degree - 180) : undefined;
+  const fromDegrees =
+    typeof degree === 'number' && Number.isFinite(degree) ? normalizeDegrees(degree - 180) : undefined;
 
   return (
     <>
@@ -139,24 +146,26 @@ export function WindDegreeGuide({ degree, variant = 'icon' }: WindDegreeGuidePro
             <div className="space-y-3 px-4 py-3">
               <CompassDial degree={degree} />
 
-              {typeof degree === 'number' && Number.isFinite(degree) && (
+              {typeof degree === 'number' && Number.isFinite(degree) && toDegrees !== undefined && fromDegrees !== undefined && (
                 <p className="rounded-lg bg-sky-50 px-3 py-2 text-xs leading-relaxed text-sky-900">
-                  Saat ini angin lokasi ini berasal dari{' '}
-                  <strong>{currentLabel ?? `${Math.round(degree)}°`}</strong> ({degree.toFixed(1)}°) — lihat posisi
-                  panah pada kompas.
+                  Saat ini angin lokasi ini <strong>menuju</strong>{' '}
+                  <strong>{toLabel ?? `${Math.round(toDegrees)}°`}</strong> ({toDegrees.toFixed(1)}°), berasal
+                  dari {fromLabel ?? `${Math.round(fromDegrees)}°`} ({fromDegrees.toFixed(1)}°). Lihat posisi panah
+                  pada kompas.
                 </p>
               )}
 
               <p className="text-xs leading-relaxed text-slate-600">
-                Panah berputar <strong>presisi sesuai derajat data</strong> dengan acuan{' '}
-                <strong>utara = atas</strong>. Sementara label teks memakai 8 penjuru mata angin hasil pembulatan
-                kelipatan 45° (rentang ±22,5°):
+                Panah menunjuk ke arah angin <strong>menuju</strong> (ke mana) dan berputar{' '}
+                <strong>presisi sesuai derajat yang ditampilkan</strong> dengan acuan{' '}
+                <strong>utara = atas</strong> (0° = utara). Derajat ini adalah kebalikan dari{' '}
+                <code>wd_deg</code> BMKG (arah <strong>asal</strong>) yang ditambah 180°. Label teks memakai 8
+                penjuru mata angin hasil pembulatan kelipatan 45° (rentang ±22,5°):
               </p>
-
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-slate-200 text-slate-400">
-                    <th className="py-1.5 font-medium">Arah</th>
+                    <th className="py-1.5 font-medium">Arah tujuan</th>
                     <th className="py-1.5 font-medium">Derajat ideal</th>
                     <th className="py-1.5 font-medium">Rentang label</th>
                   </tr>
@@ -174,7 +183,8 @@ export function WindDegreeGuide({ degree, variant = 'icon' }: WindDegreeGuidePro
 
               <p className="text-[11px] leading-relaxed text-slate-400">
                 Catatan: nilai derajat dari BMKG (<code>wd_deg</code>) adalah arah <strong>asal</strong> angin.
-                Arahkan kursor ke panah mana pun untuk melihat derajatnya.
+                Aplikasi menambahkan 180° sehingga derajat yang tampil = arah <strong>tujuan</strong> (0° =
+                utara = angin menuju utara). Arahkan kursor ke panah mana pun untuk melihat label arah tujuannya.
               </p>
             </div>
           </div>

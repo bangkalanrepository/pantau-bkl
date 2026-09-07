@@ -6,7 +6,7 @@ import type {
   WeatherData,
 } from '../types';
 import { isFiniteNumber, safeString } from './format';
-import { getWindDirection } from './wind';
+import { getWindDirection, toWindDestinationDegrees } from './wind';
 
 export interface BmkgWeatherResult {
   weather: WeatherData;
@@ -126,15 +126,17 @@ export function parseBmkgWeather(payload: unknown): BmkgWeatherResult {
   if (current) {
     const visibilityInfo = buildVisibility(current);
     const wdDeg = num(current.wd_deg);
+    // BMKG wd_deg = arah ASAL angin; simpan arah TUJUAN (0° = Utara = ke utara).
+    const wdDestinationDeg = toWindDestinationDegrees(wdDeg);
 
     Object.assign(weather, {
       temperature: num(current.t),
       humidity: num(current.hu),
       windSpeed: num(current.ws),
       gusts: undefined, // Endpoint BMKG ini tidak menyediakan gust; field tetap didukung model.
-      windDirectionDeg: wdDeg,
+      windDirectionDeg: wdDestinationDeg,
       windDirectionCardinal: str(current.wd)?.toUpperCase(),
-      windDirectionText: getWindDirection(wdDeg),
+      windDirectionText: getWindDirection(wdDestinationDeg),
       weatherCode: num(current.weather),
       weatherDescription: str(current.weather_desc),
       weatherDescriptionEn: str(current.weather_desc_en),

@@ -48,11 +48,13 @@ interface MapViewProps {
 
 /** Peta utama Leaflet + marker seluruh lokasi. */
 export function MapView({ locations, dataMap, selectedId, onSelect }: MapViewProps) {
+  const selectedDeg = selectedId !== null ? dataMap[selectedId]?.weather.windDirectionDeg : undefined;
+
   return (
     <div className="relative h-full w-full">
       {/* Tombol bantuan mengambang: panduan derajat arah angin */}
       <div className="absolute bottom-14 left-3 z-[1100] sm:bottom-16">
-        <WindDegreeGuide variant="chip" />
+        <WindDegreeGuide variant="chip" degree={selectedDeg} />
       </div>
       <MapContainer
         center={DEFAULT_MAP_CENTER}
